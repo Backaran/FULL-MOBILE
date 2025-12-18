@@ -4,11 +4,11 @@ import { ReactNode } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export type BaseScreenProps = {
-  title: string,
-  children: ReactNode,
+  title: string;
+  children: ReactNode;
 };
 
-const BaseScreen = ({
+const Screen = ({
   title,
   children,
 }: BaseScreenProps) => {
@@ -31,4 +31,4 @@ const BaseScreen = ({
   );
 }
 
-export default BaseScreen;
+export default Screen;

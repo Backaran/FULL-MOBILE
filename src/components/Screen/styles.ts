@@ -3,12 +3,12 @@ import { StyleSheet } from 'react-native';
 export default StyleSheet.create({
   title: {
     height: 64,
-    backgroundColor: 'blue',
+    backgroundColor: 'gray',
     justifyContent: 'center',
     alignItems: 'center',
   },
   titleText: {
-    color: 'white',
+    color: 'black',
   },
   content: {
     padding: 6,

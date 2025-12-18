@@ -8,4 +8,4 @@ export const openURL = async (url: string): Promise<boolean> => {
   } else {
     return false;
   }
-};
+}

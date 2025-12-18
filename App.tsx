@@ -1,6 +1,7 @@
 import { StatusBar, useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import GithubSearchScreen from './src/screens/GithubSearchScreen';
+import GithubUserSearchScreen from './src/screens/GithubUserSearchScreen';
+import { StoreProvider } from './src/store/store';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -8,7 +9,9 @@ function App() {
   return (
     <SafeAreaProvider>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <GithubSearchScreen />
+      <StoreProvider>
+        <GithubUserSearchScreen />
+      </StoreProvider>
     </SafeAreaProvider>
   );
 }

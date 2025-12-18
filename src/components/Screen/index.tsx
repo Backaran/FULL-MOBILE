@@ -1,12 +1,12 @@
-import { Text, View } from 'react-native';
-import styles from './styles';
 import { ReactNode } from 'react';
+import { Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import styles from './styles';
 
-export type BaseScreenProps = {
+type BaseScreenProps = {
   title: string;
   children: ReactNode;
-};
+}
 
 const Screen = ({
   title,

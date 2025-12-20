@@ -1,7 +1,6 @@
 import { Dispatch } from "react";
-import * as githubService from "../../services/github";
-import { Constants } from "./constants";
-import { GithubSearchErrorAction, GithubSearchStartAction, GithubSearchStopAction } from "./actions";
+import { GithubUserSearchResponse, searchGithubUsers } from "../../services/github";
+import { githubSearchError, githubSearchStart, githubSearchStop } from "./actions";
 
 export const fetchGithubUsers = async (
   dispatch: Dispatch<{ type: string }>,
@@ -9,14 +8,11 @@ export const fetchGithubUsers = async (
   page?: number
 ) => {
   const _page: number = page || 1;
-  const startAction: GithubSearchStartAction = { type: Constants.GITHUB_SEARCH_START, payload: { search, page: _page } };
-  dispatch(startAction);
+  dispatch(githubSearchStart(search, _page));
   try {
-    const data = await githubService.searchUsers(search, _page);
-    const stopAction: GithubSearchStopAction = { type: Constants.GITHUB_SEARCH_STOP, payload: { data } };
-    dispatch(stopAction);
+    const response: GithubUserSearchResponse | null = await searchGithubUsers(search, _page);
+    dispatch(githubSearchStop(response?.items || [], response?.total_count || 0));
   } catch (e) {
-    const errorAction: GithubSearchErrorAction = { type: Constants.GITHUB_SEARCH_ERROR, payload: { error: e as Error } };
-    dispatch(errorAction);
+    dispatch(githubSearchError(e as Error));
   }
 }

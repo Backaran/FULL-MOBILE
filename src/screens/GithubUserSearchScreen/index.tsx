@@ -1,42 +1,60 @@
-import Screen from '../../components/Screen';
-import SearchInput, { SearchInputRefProps } from '../../components/SearchInput';
-import SearchResult from '../../components/SearchResult';
-import { GithubUser } from '../../services/github';
-import GithubResultCard from '../../components/GithubUserCard';
-import { useCallback, useRef } from 'react';
-import { useStore } from '../../hooks/useStore';
-import { fetchGithubUsers } from '../../store/Github/thunks';
+import { useCallback, useRef } from "react";
+import { useStore } from "../../hooks/useStore";
+import BaseScreen from "../BaseScreen";
+import { GithubUser } from "../../services/github";
+import { fetchGithubUsers } from "../../store/Github/thunks";
+import SearchInput, { SearchInputRefProps } from "../../components/Inputs/SearchInput";
+import SearchResult, { SelectionState } from "../../components/SearchResult";
+import GithubResultCard from "../../business/GithubUserCard";
 
-const GithubUserSearchScreen = () => {
-  const editMode = false;
-  const { dispatch, state } = useStore();
-  const _searchInputRef = useRef<SearchInputRefProps>(null);
+type GithubUserSearchScreenProps = {
+  editMode?: boolean;
+}
+
+const GithubUserSearchScreen = ({
+  editMode = true,
+}: GithubUserSearchScreenProps) => {
+  const { dispatch, state } = useStore()
+  const _searchInputRef = useRef<SearchInputRefProps>(null)
 
   const onSearch = useCallback((search: string) => {
     fetchGithubUsers(dispatch, search);
-  }, [dispatch]);
+  }, [dispatch])
 
   const onSearchMore = useCallback((page: number) => {
-    const search = _searchInputRef.current?.getSearch();
-    fetchGithubUsers(dispatch, search || '', page);
-  }, [dispatch]);
+    const search: string = _searchInputRef.current?.getSearch() || '';
+    fetchGithubUsers(dispatch, search, page);
+  }, [dispatch])
 
   return (
-    <Screen title="Github Search">
+    <BaseScreen title="Github Search">
       <SearchInput
         ref={_searchInputRef}
         onSearch={onSearch}
       />
       <SearchResult<GithubUser>
-        items={state.github.users.data}
-        lastPage={state.github.users.page}
+        items={state.github.users.search.length > 0 ? state.github.users.data : undefined}
+        total={state.github.users.total}
+        currentPage={state.github.users.page}
         loading={state.github.users.loading}
         editMode={editMode}
         onSearchMore={onSearchMore}
-        renderItem={(d: GithubUser) => <GithubResultCard data={d} editMode={editMode} />}
+        renderItem={(
+          item: GithubUser,
+          _editMode: boolean,
+          selected: boolean,
+          onSelectionChanged?: (id: (string | number), state: SelectionState) => void
+        ) => (
+          <GithubResultCard
+            data={item}
+            selected={selected}
+            editMode={_editMode}
+            onPress={() => onSelectionChanged && onSelectionChanged(item.id, selected ? SelectionState.NotSelected : SelectionState.Selected)}
+          />
+        )}
       />
-    </Screen>
-  );
+    </BaseScreen>
+  )
 }
 
 export default GithubUserSearchScreen;

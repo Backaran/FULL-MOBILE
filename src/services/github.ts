@@ -1,22 +1,28 @@
+const githubBaseUrl: string = 'https://api.github.com'
+
 export type GithubUser = {
-  id: string;
+  id: number;
   login: string;
   avatar_url: string;
   html_url: string;
 }
 
-type GitHubSearchResponse = {
+export type GithubUserSearchResponse = {
+  incomplete_results: boolean;
   items: GithubUser[];
+  total_count: number;
 }
 
-let searchUsersAbortController: AbortController | null = null;
-export const searchUsers = async (search: string, page: number = 1): Promise<GithubUser[]> => {
-  let result: GithubUser[] = [];
+let githubSearchUsersAbortController: AbortController | null = null
 
-  if (searchUsersAbortController) {
-    searchUsersAbortController.abort();
+// peut declencher des erreurs normalement c'est max 60 call par heure à voir
+export const searchGithubUsers = async (search: string, page: number = 1): Promise<GithubUserSearchResponse | null> => {
+  let result: GithubUserSearchResponse | null = null;
+
+  if (githubSearchUsersAbortController) {
+    githubSearchUsersAbortController.abort();
   }
-  searchUsersAbortController = new AbortController();
+  githubSearchUsersAbortController = new AbortController();
 
   if (!search.trim()) {
     return result;
@@ -24,16 +30,14 @@ export const searchUsers = async (search: string, page: number = 1): Promise<Git
 
   try {
 
-    const url: string = `https://api.github.com/search/users?q=${encodeURIComponent(search)}&page=${page}&per_page=100`;
-    const response = await fetch(url, { signal: searchUsersAbortController.signal });
+    const url: string = `${githubBaseUrl}/search/users?q=${encodeURIComponent(search)}&page=${page}&per_page=100`;
+    const response: Response = await fetch(url, { signal: githubSearchUsersAbortController.signal });
 
     if (!response.ok) {
       throw new Error('GitHub API error');
     }
 
-    const data: GitHubSearchResponse = await response.json();
-
-    result = data.items;
+    result = await response.json();
 
   } catch (error: any) {
 
@@ -42,7 +46,7 @@ export const searchUsers = async (search: string, page: number = 1): Promise<Git
     }
 
   } finally {
-    searchUsersAbortController = null;
+    githubSearchUsersAbortController = null;
   }
 
   return result;

@@ -1,29 +1,31 @@
 import { GithubUser } from "../../services/github";
 import { GithubSearchErrorAction, GithubSearchStartAction, GithubSearchStopAction } from "./actions";
-import { Constants } from "./constants";
+import { GithubConstants } from "./constants";
 
-export interface State {
+export interface GithubState {
   users: {
     search: string,
     data: GithubUser[];
+    total: number;
     page: number;
     loading: boolean;
     error?: Error;
   },
 }
 
-export const initialState: State = {
+export const githubInitialState: GithubState = {
   users: {
     search: '',
     data: [],
+    total: 0,
     page: 1,
     loading: false,
   }
 }
 
-export const reducer = (state: State, action: { type: string }): State => {
+export const githubReducer = (state: GithubState, action: { type: string }): GithubState => {
   switch (action.type) {
-    case Constants.GITHUB_SEARCH_START: {
+    case GithubConstants.GITHUB_SEARCH_START: {
       const customAction = action as GithubSearchStartAction;
       return {
         ...state,
@@ -34,10 +36,11 @@ export const reducer = (state: State, action: { type: string }): State => {
           search: customAction.payload.search,
           page: customAction.payload.page,
           data: customAction.payload.page === 1 ? [] : state.users.data,
+          total: customAction.payload.page === 1 ? 0 : state.users.total,
         }
       };
     }
-    case Constants.GITHUB_SEARCH_STOP: {
+    case GithubConstants.GITHUB_SEARCH_STOP: {
       const customAction = action as GithubSearchStopAction;
       return {
         ...state,
@@ -46,10 +49,11 @@ export const reducer = (state: State, action: { type: string }): State => {
           loading: false,
           error: undefined,
           data: [...state.users.data, ...customAction.payload.data],
+          total: customAction.payload.total,
         }
       };
     }
-    case Constants.GITHUB_SEARCH_ERROR: {
+    case GithubConstants.GITHUB_SEARCH_ERROR: {
       const customAction = action as GithubSearchErrorAction;
       return {
         ...state,

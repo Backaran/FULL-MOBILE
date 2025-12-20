@@ -1,6 +1,6 @@
-export const prefix: string = 'GITHUB';
+export const githubPrefix: string = 'GITHUB'
 
-export enum Constants {
+export enum GithubConstants {
   GITHUB_SEARCH_START = 'GITHUB_SEARCH_START',
   GITHUB_SEARCH_STOP = 'GITHUB_SEARCH_STOP',
   GITHUB_SEARCH_ERROR = 'GITHUB_SEARCH_ERROR',

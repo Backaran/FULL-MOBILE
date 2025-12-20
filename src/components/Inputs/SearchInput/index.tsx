@@ -1,6 +1,6 @@
-import { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
+import { forwardRef, useImperativeHandle, useState } from 'react';
 import { TextInput, View } from 'react-native';
-import useDebounceEffect from '../../hooks/useDebounceEffect';
+import useDebounce from '../../hooks/useDebounce';
 import styles from './styles';
 
 export type SearchInputRefProps = {
@@ -24,13 +24,8 @@ const SearchInput = forwardRef<SearchInputRefProps, SearchInputProps>(({
     getSearch: () => search,
   }));
 
-  const canStart = useCallback((s: string) => {
-    return s.length > 0;
-  }, []);
-
-  useDebounceEffect(
+  useDebounce(
     search,
-    canStart,
     onSearch,
     delayInMs
   );
@@ -41,9 +36,7 @@ const SearchInput = forwardRef<SearchInputRefProps, SearchInputProps>(({
         style={styles.searchInput}
         placeholder={placeholder}
         value={search}
-        onChangeText={(text: string) => {
-          setSearch(text);
-        }}
+        onChangeText={setSearch}
       />
     </View>
   );

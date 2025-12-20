@@ -1,49 +1,17 @@
-import {
-  createContext,
-  useReducer,
-  ReactNode,
-  Dispatch,
-} from "react";
-import * as githubReducer from "./Github/reducer";
-import * as githubConstants from "./Github/constants";
-
-/* ------------------ STATE ------------------ */
+import { GithubState, githubInitialState, githubReducer } from "./Github/reducer";
+import { githubPrefix } from "./Github/constants";
 
 export interface AppState {
-  github: githubReducer.State;
+  github: GithubState;
 }
 
-const initialState: AppState = {
-  github: githubReducer.initialState,
-};
+export const initialState: AppState = {
+  github: githubInitialState,
+}
 
-/* ------------------ REDUCER ------------------ */
-
-const reducer = (state: AppState, action: { type: string }): AppState => {
-  if (action.type.startsWith(githubConstants.prefix)) {
-    return { ...state, github: githubReducer.reducer(state.github, action) };
+export const reducer = (state: AppState, action: { type: string }): AppState => {
+  if (action.type.startsWith(githubPrefix)) {
+    return { ...state, github: githubReducer(state.github, action) };
   }
   throw new Error(`Unknown action: ${action.type}`);
-}
-
-/* ------------------ CONTEXT ------------------ */
-
-export interface StoreContextValue {
-  state: AppState;
-  dispatch: Dispatch<{ type: string }>;
-}
-
-export const StoreContext = createContext<StoreContextValue | undefined>(undefined);
-
-/* ------------------ PROVIDER ------------------ */
-
-export const StoreProvider = ({ children }: { children: ReactNode }) => {
-  const [state, dispatch] = useReducer(reducer, initialState);
-  const value: StoreContextValue = { state, dispatch };
-
-  return (
-    <StoreContext.Provider value={value} >
-      {children}
-    </StoreContext.Provider>
-  );
 }

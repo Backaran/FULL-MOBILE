@@ -1,8 +1,8 @@
-import { ReactElement, useCallback, useEffect, useState } from 'react';
+import { forwardRef, ReactElement, useCallback, useImperativeHandle, useState } from 'react';
 import { ActivityIndicator, FlatList, Text, View } from 'react-native';
-import styles from './styles';
 import Icon, { IconType } from '../Icon';
 import CheckboxInput, { CheckboxInputState } from '../Inputs/CheckboxInput';
+import styles from './styles';
 
 export enum SelectionState {
   NotSelected = 0,
@@ -13,35 +13,49 @@ interface Result {
   id: string | number;
 }
 
+export type SearchResultRefProps = {
+  resetSelection: (ids?: (string | number)[]) => void;
+}
+
 type SearchResultProps<T extends Result> = {
   items?: T[];
-  total: number;
   currentPage: number;
+  maxPage: number;
   loading: boolean;
   editMode?: boolean;
   onSearchMore: (page: number) => void;
+  onDuplicateItems: (itemsToDuplicate: T[]) => void;
+  onDeleteItems: (itemsToDelete: T[]) => void;
   renderItem: (
     item: T,
     editMode: boolean,
     selected: boolean,
-    onSelectionChanged?: (id: string | number, state: SelectionState) => void,
+    onSelectionChanged: (id: string | number, state: SelectionState) => void,
   ) => ReactElement;
 };
 
-const SearchResult = <T extends Result>({
-  items,
-  total,
-  currentPage,
-  loading,
-  editMode = false,
-  onSearchMore,
-  renderItem,
-}: SearchResultProps<T>) => {
+const SearchResultInner = <T extends Result>(
+  {
+    items,
+    currentPage,
+    maxPage,
+    loading,
+    editMode = false,
+    onSearchMore,
+    renderItem,
+  }: SearchResultProps<T>,
+  ref: React.Ref<SearchResultRefProps>,
+) => {
   const [selectedIds, setSelectedIds] = useState<(string | number)[]>([]);
 
-  useEffect(() => {
-    setSelectedIds([]);
-  }, [items]);
+  useImperativeHandle(ref, () => ({
+    resetSelection: (idsToDelete) => setSelectedIds((ids) => {
+      if (idsToDelete) {
+        return ids.filter(x => !idsToDelete.includes(x));
+      }
+      return [];
+    }),
+  }));
 
   const onCheckboxChanged = useCallback(
     (state: CheckboxInputState) => {
@@ -68,10 +82,10 @@ const SearchResult = <T extends Result>({
   );
 
   const onEndReached = useCallback(() => {
-    if (items && items.length !== total) {
+    if (currentPage !== maxPage) {
       onSearchMore(currentPage + 1);
     }
-  }, [onSearchMore, currentPage, items, total]);
+  }, [onSearchMore, currentPage, maxPage]);
 
   const renderEmpty = useCallback(() => {
     if (!items || loading) {
@@ -122,9 +136,7 @@ const SearchResult = <T extends Result>({
         data={items}
         style={styles.resultContainer}
         keyExtractor={(item: T) => item.id.toString()}
-        renderItem={({ item }) =>
-          renderItem(item, editMode, selectedIds.includes(item.id), onSelectionChanged)
-        }
+        renderItem={({ item }) => renderItem(item, editMode, selectedIds.includes(item.id), onSelectionChanged)}
         ListEmptyComponent={renderEmpty}
         onEndReached={onEndReached}
         ListFooterComponent={renderFooter}
@@ -132,5 +144,11 @@ const SearchResult = <T extends Result>({
     </View>
   );
 };
+
+const SearchResult = forwardRef(SearchResultInner) as <T extends Result>(
+  props: SearchResultProps<T> & {
+    ref?: React.Ref<SearchResultRefProps>;
+  },
+) => ReactElement;
 
 export default SearchResult;

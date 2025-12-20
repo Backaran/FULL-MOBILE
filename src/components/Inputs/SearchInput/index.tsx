@@ -1,6 +1,6 @@
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { TextInput, View } from 'react-native';
-import useDebounce from '../../hooks/useDebounce';
+import useDebounce from '../../../hooks/useDebounce';
 import styles from './styles';
 
 export type SearchInputRefProps = {

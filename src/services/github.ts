@@ -1,26 +1,25 @@
 const githubBaseUrl: string = 'https://api.github.com';
 
-export type GithubUser = {
+export type GithubApiUser = {
   id: number;
   login: string;
   avatar_url: string;
   html_url: string;
 };
 
-export type GithubUserSearchResponse = {
+export type GithubApiSearchUserResponse = {
   incomplete_results: boolean;
-  items: GithubUser[];
+  items: GithubApiUser[];
   total_count: number;
 };
 
 let githubSearchUsersAbortController: AbortController | null = null;
 
-// peut declencher des erreurs normalement c'est max 60 call par heure à voir
-export const searchGithubUsers = async (
+export const githubSearchUsers = async (
   search: string,
   page: number = 1,
-): Promise<GithubUserSearchResponse | null> => {
-  let result: GithubUserSearchResponse | null = null;
+): Promise<GithubApiSearchUserResponse | null> => {
+  let result: GithubApiSearchUserResponse | null = null;
 
   if (githubSearchUsersAbortController) {
     githubSearchUsersAbortController.abort();

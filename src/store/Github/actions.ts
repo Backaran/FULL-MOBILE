@@ -1,29 +1,53 @@
-import { GithubUser } from '../../services/github';
 import { GithubConstants } from './constants';
+import { GithubUser } from './reducer';
 
-export type GithubSearchStartAction = {
-  type: GithubConstants.GITHUB_SEARCH_START;
+// ==================== SEARCH
+
+export type GithubSearchUsersStartAction = {
+  type: GithubConstants.GITHUB_SEARCH_USERS_START;
   payload: { search: string; page: number };
 };
-export const githubSearchStart = (search: string, page: number): GithubSearchStartAction => ({
-  type: GithubConstants.GITHUB_SEARCH_START,
+export const githubSearchStart = (search: string, page: number): GithubSearchUsersStartAction => ({
+  type: GithubConstants.GITHUB_SEARCH_USERS_START,
   payload: { search, page },
 });
 
-export type GithubSearchStopAction = {
-  type: GithubConstants.GITHUB_SEARCH_STOP;
+export type GithubSearchUsersStopAction = {
+  type: GithubConstants.GITHUB_SEARCH_USERS_STOP;
   payload: { data: GithubUser[]; total: number };
 };
-export const githubSearchStop = (data: GithubUser[], total: number): GithubSearchStopAction => ({
-  type: GithubConstants.GITHUB_SEARCH_STOP,
+export const githubSearchStop = (data: GithubUser[], total: number): GithubSearchUsersStopAction => ({
+  type: GithubConstants.GITHUB_SEARCH_USERS_STOP,
   payload: { data, total },
 });
 
-export type GithubSearchErrorAction = {
-  type: GithubConstants.GITHUB_SEARCH_ERROR;
+export type GithubSearchUsersErrorAction = {
+  type: GithubConstants.GITHUB_SEARCH_USERS_ERROR;
   payload: { error: Error };
 };
-export const githubSearchError = (error: Error): GithubSearchErrorAction => ({
-  type: GithubConstants.GITHUB_SEARCH_ERROR,
+export const githubSearchError = (error: Error): GithubSearchUsersErrorAction => ({
+  type: GithubConstants.GITHUB_SEARCH_USERS_ERROR,
   payload: { error },
+});
+
+// ==================== DUPLICATE
+
+export type GithubDuplicateUsersAction = {
+  type: GithubConstants.GITHUB_DUPLICATE_USERS;
+  payload: { ids: string[] };
+};
+export const githubDuplicateUsers = (ids: string[]): GithubDuplicateUsersAction => ({
+  type: GithubConstants.GITHUB_DUPLICATE_USERS,
+  payload: { ids },
+});
+
+// ==================== DELETE
+
+export type GithubDeleteUsersAction = {
+  type: GithubConstants.GITHUB_DELETE_USERS;
+  payload: { ids: string[] };
+};
+export const githubDeleteUsers = (ids: string[]): GithubDeleteUsersAction => ({
+  type: GithubConstants.GITHUB_DELETE_USERS,
+  payload: { ids },
 });

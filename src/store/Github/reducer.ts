@@ -1,16 +1,20 @@
-import { GithubUser } from "../../services/github";
-import { GithubSearchErrorAction, GithubSearchStartAction, GithubSearchStopAction } from "./actions";
-import { GithubConstants } from "./constants";
+import { GithubUser } from '../../services/github';
+import {
+  GithubSearchErrorAction,
+  GithubSearchStartAction,
+  GithubSearchStopAction,
+} from './actions';
+import { GithubConstants } from './constants';
 
 export interface GithubState {
   users: {
-    search: string,
+    search: string;
     data: GithubUser[];
     total: number;
     page: number;
     loading: boolean;
     error?: Error;
-  },
+  };
 }
 
 export const githubInitialState: GithubState = {
@@ -20,8 +24,8 @@ export const githubInitialState: GithubState = {
     total: 0,
     page: 1,
     loading: false,
-  }
-}
+  },
+};
 
 export const githubReducer = (state: GithubState, action: { type: string }): GithubState => {
   switch (action.type) {
@@ -37,7 +41,7 @@ export const githubReducer = (state: GithubState, action: { type: string }): Git
           page: customAction.payload.page,
           data: customAction.payload.page === 1 ? [] : state.users.data,
           total: customAction.payload.page === 1 ? 0 : state.users.total,
-        }
+        },
       };
     }
     case GithubConstants.GITHUB_SEARCH_STOP: {
@@ -50,7 +54,7 @@ export const githubReducer = (state: GithubState, action: { type: string }): Git
           error: undefined,
           data: [...state.users.data, ...customAction.payload.data],
           total: customAction.payload.total,
-        }
+        },
       };
     }
     case GithubConstants.GITHUB_SEARCH_ERROR: {
@@ -60,11 +64,11 @@ export const githubReducer = (state: GithubState, action: { type: string }): Git
         users: {
           ...state.users,
           loading: false,
-          error: customAction.payload.error
-        }
+          error: customAction.payload.error,
+        },
       };
     }
     default:
       return state;
   }
-}
+};

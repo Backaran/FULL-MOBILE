@@ -23,5 +23,5 @@ export default StyleSheet.create({
     lineHeight: 17,
     textAlign: 'center',
     fontWeight: 'bold',
-  }
+  },
 });

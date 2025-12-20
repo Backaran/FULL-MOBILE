@@ -30,7 +30,6 @@ These actions are only front-end and will be reset when the search change
 Add an edit mode
 
 - When edit mode is on:
-
   - display checkboxes on cards
   - display the select all checkbox
   - display duplicate and delete actions

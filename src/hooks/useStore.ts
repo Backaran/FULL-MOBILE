@@ -1,14 +1,14 @@
-import { useContext } from "react";
-import { StoreContext, StoreContextValue } from "../providers/storeProvider";
+import { useContext } from 'react';
+import { StoreContext, StoreContextValue } from '../providers/storeProvider';
 
 const useStore = (): StoreContextValue => {
-  const context = useContext(StoreContext)
+  const context = useContext(StoreContext);
 
   if (!context) {
-    throw new Error("StoreProvider missing")
+    throw new Error('StoreProvider missing');
   }
 
-  return context
-}
+  return context;
+};
 
 export default useStore;

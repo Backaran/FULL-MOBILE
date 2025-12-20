@@ -1,11 +1,11 @@
-import { Dispatch } from "react";
-import { GithubUserSearchResponse, searchGithubUsers } from "../../services/github";
-import { githubSearchError, githubSearchStart, githubSearchStop } from "./actions";
+import { Dispatch } from 'react';
+import { GithubUserSearchResponse, searchGithubUsers } from '../../services/github';
+import { githubSearchError, githubSearchStart, githubSearchStop } from './actions';
 
 export const fetchGithubUsers = async (
   dispatch: Dispatch<{ type: string }>,
   search: string,
-  page?: number
+  page?: number,
 ) => {
   const _page: number = page || 1;
   dispatch(githubSearchStart(search, _page));
@@ -15,4 +15,4 @@ export const fetchGithubUsers = async (
   } catch (e) {
     dispatch(githubSearchError(e as Error));
   }
-}
+};

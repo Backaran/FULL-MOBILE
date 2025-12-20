@@ -5,13 +5,9 @@ type ButtonProps = {
   title: string;
   enabled?: boolean;
   onPress: () => void;
-}
+};
 
-const Button = ({
-  title,
-  enabled = true,
-  onPress,
-}: ButtonProps) => {
+const Button = ({ title, enabled = true, onPress }: ButtonProps) => {
   return (
     <Pressable onPress={enabled ? onPress : undefined}>
       <View style={styles.container}>
@@ -19,6 +15,6 @@ const Button = ({
       </View>
     </Pressable>
   );
-}
+};
 
 export default Button;

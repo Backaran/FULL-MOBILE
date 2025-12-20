@@ -13,18 +13,13 @@ export enum IconSize {
 }
 
 type IconProps = {
-  type: IconType,
+  type: IconType;
   disabled?: boolean;
-  size?: IconSize,
+  size?: IconSize;
   onPress?: () => void;
-}
+};
 
-const Icon = ({
-  type,
-  disabled = false,
-  size = IconSize.Small,
-  onPress,
-}: IconProps) => {
+const Icon = ({ type, disabled = false, size = IconSize.Small, onPress }: IconProps) => {
   return (
     <Pressable disabled={disabled} onPress={onPress}>
       <View style={disabled ? styles.iconDisabled : styles.iconEnabled}>
@@ -32,7 +27,7 @@ const Icon = ({
       </View>
     </Pressable>
   );
-}
+};
 
 const getIconImage = (type: IconType): any => {
   switch (type) {
@@ -52,6 +47,6 @@ const getIconSizeStyle = (size: IconSize) => {
     case IconSize.Large:
       return styles.iconLarge;
   }
-}
+};
 
 export default Icon;

@@ -5,7 +5,7 @@ export default StyleSheet.create({
     opacity: 1,
   },
   iconDisabled: {
-    opacity: .5,
+    opacity: 0.5,
   },
   iconSmall: {
     width: 22,

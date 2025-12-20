@@ -13,15 +13,9 @@ type GithubUserCardProps = {
   editMode: boolean;
   selected: boolean;
   onPress?: () => void;
-}
+};
 
-const GithubUserCard = ({
-  data,
-  editMode,
-  selected,
-  onPress,
-}: GithubUserCardProps) => {
-
+const GithubUserCard = ({ data, editMode, selected, onPress }: GithubUserCardProps) => {
   const showProfile = useCallback(async () => {
     const result: boolean = await openURL(data.html_url);
     if (!result) {
@@ -34,7 +28,9 @@ const GithubUserCard = ({
       <Card>
         {editMode && (
           <View style={styles.selectionContainer}>
-            <CheckboxInput value={selected ? CheckboxInputState.Selected : CheckboxInputState.Unselected} />
+            <CheckboxInput
+              value={selected ? CheckboxInputState.Selected : CheckboxInputState.Unselected}
+            />
           </View>
         )}
         <Avatar url={data.avatar_url} />
@@ -42,13 +38,10 @@ const GithubUserCard = ({
           <Text style={styles.text}>{data.id}</Text>
           <Text style={styles.text}>{data.login}</Text>
         </View>
-        <Button
-          title="View profile"
-          onPress={showProfile}
-        />
+        <Button title="View profile" onPress={showProfile} />
       </Card>
     </Pressable>
   );
-}
+};
 
 export default GithubUserCard;

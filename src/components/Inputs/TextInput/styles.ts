@@ -6,7 +6,7 @@ export default StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 12,
   },
-  searchInput: {
+  input: {
     backgroundColor: '#d5d5d5',
     color: 'black',
     borderRadius: 5,

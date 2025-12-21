@@ -1,14 +1,16 @@
 import { TextInput as BaseTextInput, View } from 'react-native';
 import styles from './styles';
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface TextInputProps {
   /** initial search value */
   initialValue?: string;
   /** action to be trigger after search changed */
-  onChanged: (search: string) => void;
+  onChange: (search: string) => void;
   /** placeholder of input */
   placeholder?: string;
+  /** delay before trigger on change, without subsequent change  */
+  debouceDelayInMs?: number;
 };
 
 /**
@@ -20,17 +22,38 @@ interface TextInputProps {
  */
 const TextInput = ({
   initialValue = '',
-  onChanged,
-  placeholder = 'Search Input'
+  onChange,
+  placeholder = '',
+  debouceDelayInMs,
 }: TextInputProps) => {
+  const firstRender = useRef(true);
+  const [value, setValue] = useState<string>(initialValue);
+
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+
+    if (!debouceDelayInMs) {
+      onChange(value);
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      onChange(value);
+    }, debouceDelayInMs);
+
+    return () => { clearTimeout(timeout); };
+  }, [value, debouceDelayInMs, onChange]);
 
   return (
     <View style={styles.container}>
       <BaseTextInput
-        style={styles.searchInput}
+        style={styles.input}
         placeholder={placeholder}
-        defaultValue={initialValue}
-        onChangeText={(search: string) => onChanged(search)}
+        value={value}
+        onChangeText={setValue}
       />
     </View>
   );

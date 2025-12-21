@@ -1,4 +1,4 @@
-const githubBaseUrl: string = 'https://api.github.com';
+const GITHUB_BASE_URL: string = 'https://api.github.com';
 
 export type GithubApiUser = {
   id: number;
@@ -13,8 +13,6 @@ export type GithubApiSearchUserResponse = {
   total_count: number;
 };
 
-let githubSearchUsersAbortController: AbortController | null = null;
-
 /**
  * Use to search a github users
  * @param search terme to search
@@ -24,38 +22,28 @@ let githubSearchUsersAbortController: AbortController | null = null;
  */
 export const githubSearchUsers = async (
   search: string,
-  page: number,
-  resultPerPage: number,
+  page: number = 1,
+  resultPerPage: number = 30,
+  signal?: AbortSignal,
 ): Promise<GithubApiSearchUserResponse | null> => {
-  let result: GithubApiSearchUserResponse | null = null;
-
-  if (githubSearchUsersAbortController) {
-    githubSearchUsersAbortController.abort();
-  }
-  githubSearchUsersAbortController = new AbortController();
-
-  if (!search.trim()) {
-    return result;
-  }
-
   try {
-    const url: string = `${githubBaseUrl}/search/users?q=${encodeURIComponent(search)}&page=${page}&per_page=${resultPerPage}`;
-    const response: Response = await fetch(url, {
-      signal: githubSearchUsersAbortController.signal,
-    });
+    if (!search || page < 1 || resultPerPage < 1 || resultPerPage > 100) {
+      throw new Error(String(-1));
+    }
+
+    const url: string = `${GITHUB_BASE_URL}/search/users?q=${encodeURIComponent(search)}&page=${page}&per_page=${resultPerPage}`;
+    const response: Response = await fetch(url, { signal });
 
     if (!response.ok) {
-      throw new Error('GitHub API error');
+      throw new Error(String(response.status));
     }
 
-    result = await response.json();
-  } catch (error: any) {
-    if (error.name !== 'AbortError') {
-      throw error;
-    }
-  } finally {
-    githubSearchUsersAbortController = null;
+    return await response.json() as GithubApiSearchUserResponse;
   }
-
-  return result;
+  catch (e: any) {
+    if (e.name === 'AbortError') {
+      throw new Error('AbortError');
+    }
+    throw e;
+  }
 };

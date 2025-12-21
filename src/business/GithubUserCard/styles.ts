@@ -1,7 +1,6 @@
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
-
   textContainer: {
     paddingTop: 16,
     paddingBottom: 60,

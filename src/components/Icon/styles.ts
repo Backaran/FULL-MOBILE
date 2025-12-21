@@ -7,6 +7,12 @@ export default StyleSheet.create({
   iconDisabled: {
     opacity: 0.5,
   },
+  iconRounded: {
+    borderWidth: 3,
+    borderColor: 'black',
+    backgroundColor: 'white',
+    borderRadius: 50,
+  },
   iconSmall: {
     width: 22,
     height: 22,

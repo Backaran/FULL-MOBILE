@@ -9,7 +9,7 @@ export interface StoreContextValue {
 export const StoreContext = createContext<StoreContextValue | undefined>(undefined);
 
 /**
- * Provider used to initiate data store of app
+ * used to provide access to store
  */
 export const StoreProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(appReducer, appInitialState);

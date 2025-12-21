@@ -4,6 +4,7 @@ import Icon, { IconType } from '../Icon';
 import CheckboxInput, { CheckboxInputState } from '../Inputs/CheckboxInput';
 import styles from './styles';
 import Button from '../Button';
+import Card from '../Card';
 
 export enum SelectionState {
   NotSelected = 0,
@@ -27,8 +28,10 @@ interface ListProps<T extends Result> {
   showMore?: boolean;
   /** if the showEmpty message is shown */
   showEmpty?: boolean;
-  /** action to be trigger when selection changed */
-  onSelectionChanged?: (ids: (string | number)[]) => void;
+  /** error to be shown */
+  error?: string;
+  /** action to be trigger when selection change */
+  onSelectionChange?: (ids: (string | number)[]) => void;
   /** action to be trigger when reaching end of list */
   onSearchMore: () => void;
   /** action to be trigger when duplication icon pressed with current selection */
@@ -48,10 +51,12 @@ interface ListProps<T extends Result> {
  * List component
  * @param items items used be rendered
  * @param selectedIds items selected (default: [])
- * @param currentPage used for search more
- * @param maxPage used for search more
  * @param loading show a loading indicator
  * @param editMode used to show selection, actions and for renderItem (default: false)
+ * @param showMore if the showMore button is shown (default: false)
+ * @param showEmpty if the showEmpty message is shown (default: false)
+ * @param error error to be shown (default: false)
+ * @param onSelectionChange action to be trigger when selection change
  * @param onSearchMore action to be trigger when reaching end of list
  * @param onDuplicateItems action to be trigger when duplication icon pressed with current selection
  * @param onDeleteItems action to be trigger when delete icon pressed with current selection
@@ -65,7 +70,8 @@ const List = <T extends Result>({
   editMode = false,
   showMore = false,
   showEmpty = false,
-  onSelectionChanged,
+  error,
+  onSelectionChange,
   onSearchMore,
   onDuplicate,
   onDelete,
@@ -85,19 +91,19 @@ const List = <T extends Result>({
         : CheckboxInputState.Intermediate
   };
 
-  const onCheckboxChanged = useCallback((state: CheckboxInputState) => {
+  const onCheckboxChange = useCallback((state: CheckboxInputState) => {
     const ids: (string | number)[] = state === CheckboxInputState.Selected
       ? items.map(x => x.id) || []
       : [];
-    onSelectionChanged && onSelectionChanged(ids);
-  }, [items, onSelectionChanged]);
+    onSelectionChange && onSelectionChange(ids);
+  }, [items, onSelectionChange]);
 
-  const onItemSelectionChanged = useCallback((id: string | number, state: SelectionState) => {
+  const onItemSelectionChange = useCallback((id: string | number, state: SelectionState) => {
     const ids: (string | number)[] = state !== SelectionState.Selected
       ? selectedIds.filter(_id => _id !== id)
       : [...selectedIds.filter(_id => _id !== id), id];
-    onSelectionChanged && onSelectionChanged(ids);
-  }, [selectedIds, onSelectionChanged]);
+    onSelectionChange && onSelectionChange(ids);
+  }, [selectedIds, onSelectionChange]);
 
   const renderEmpty = useCallback(() => {
     if (loading || !showEmpty) {
@@ -128,9 +134,9 @@ const List = <T extends Result>({
       item,
       editMode,
       selectedIdsSet.has(item.id),
-      onItemSelectionChanged
+      onItemSelectionChange
     );
-  }, [renderItem, editMode, selectedIdsSet, onItemSelectionChanged]);
+  }, [renderItem, editMode, selectedIdsSet, onItemSelectionChange]);
 
   return (
     <View style={styles.container}>
@@ -139,7 +145,7 @@ const List = <T extends Result>({
           <View style={styles.selectionContainer}>
             <CheckboxInput
               value={getCheckboxState()}
-              onChanged={onCheckboxChanged}
+              onChanged={onCheckboxChange}
               disabled={items.length === 0}
             />
             <Text style={styles.selectionText}>
@@ -172,6 +178,9 @@ const List = <T extends Result>({
           (items.length === 0) && styles.resultContainerCentered
         ]}
       />
+      {error && (
+        <Card error={error} dismissOnPress />
+      )}
     </View>
   );
 };

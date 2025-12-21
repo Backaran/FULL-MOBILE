@@ -10,6 +10,13 @@ export type GithubUser = {
   html_url: string;
 };
 
+export enum GithubSearchUserErrors {
+  Unknown = 'GithubSearchUserErrors_Unknown',
+  InvalidSearch = 'GithubSearchUserErrors_InvalidSearch',
+  Unavailable = 'GithubSearchUserErrors_Unavailable',
+  Spam = 'GithubSearchUserErrors_Spam',
+}
+
 export interface GithubState {
   users: {
     search: string;
@@ -18,7 +25,7 @@ export interface GithubState {
     total: number;
     maxPage: number;
     loading: boolean;
-    error?: Error;
+    error?: GithubSearchUserErrors;
   };
 }
 
@@ -73,6 +80,7 @@ export const githubReducer = (state: GithubState, action: Action): GithubState =
         users: {
           ...state.users,
           loading: false,
+          currentPage: state.users.currentPage - 1,
           error: customAction.payload.error,
         },
       };

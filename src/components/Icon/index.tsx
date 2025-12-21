@@ -2,6 +2,7 @@ import { Image, Pressable, View } from 'react-native';
 import styles from './styles';
 
 export enum IconType {
+  Cancel = 'Cancel',
   Delete = 'Delete',
   Duplicate = 'Duplicate',
 }
@@ -19,6 +20,8 @@ interface IconProps {
   disabled?: boolean;
   /** size of icon */
   size?: IconSize;
+  /** display icone with a rounded background */
+  rounded?: boolean;
   /** action to be trigger on press */
   onPress?: () => void;
 };
@@ -28,13 +31,23 @@ interface IconProps {
  * @param type type of icon
  * @param disabled if icon can be pressed (default: false)
  * @param size size of icon (default: IconSize.Small)
+ * @param rounded display icone with a rounded background (default: false)
  * @param onPress action to be trigger on press
  * @returns component
  */
-const Icon = ({ type, disabled = false, size = IconSize.Small, onPress }: IconProps) => {
+const Icon = ({
+  type,
+  disabled = false,
+  size = IconSize.Small,
+  rounded = false,
+  onPress
+}: IconProps) => {
   return (
     <Pressable disabled={disabled} onPress={onPress}>
-      <View style={disabled ? styles.iconDisabled : styles.iconEnabled}>
+      <View style={[
+        disabled ? styles.iconDisabled : styles.iconEnabled,
+        rounded && styles.iconRounded,
+      ]}>
         <Image style={getIconSizeStyle(size)} source={getIconImage(type)} />
       </View>
     </Pressable>
@@ -43,6 +56,8 @@ const Icon = ({ type, disabled = false, size = IconSize.Small, onPress }: IconPr
 
 const getIconImage = (type: IconType): any => {
   switch (type) {
+    case IconType.Cancel:
+      return require('./images/cancel.png');
     case IconType.Delete:
       return require('./images/delete.png');
     case IconType.Duplicate:

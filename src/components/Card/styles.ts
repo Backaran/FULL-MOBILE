@@ -4,8 +4,7 @@ export default StyleSheet.create({
   container: {
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#d5d5d5',
-    borderRadius: 20,
+    borderRadius: 15,
     marginVertical: 8,
     marginHorizontal: 10,
     padding: 12,
@@ -19,9 +18,25 @@ export default StyleSheet.create({
     // Android shadow
     elevation: 3,
   },
+  regularContainer: {
+    backgroundColor: '#d5d5d5',
+  },
+  errorContainer: {
+    backgroundColor: 'red',
+  },
+  errorText: {
+    color: 'white',
+    fontWeight: '600',
+    fontSize: 16,
+  },
   selectionContainer: {
     position: 'absolute',
     top: 15,
     left: 15,
   },
+  dismissibleContainer: {
+    position: 'absolute',
+    top: -10,
+    right: -7.5,
+  }
 });

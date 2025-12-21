@@ -4,7 +4,7 @@ import useStore from '../../hooks/useStore';
 import BaseScreen from '../BaseScreen';
 import List, { SelectionState } from '../../components/List';
 import GithubUserCard from '../../business/GithubUserCard';
-import { GithubUser } from '../../store/Github/reducer';
+import { GithubSearchUserErrors, GithubUser } from '../../store/Github/reducer';
 import { githubDeleteUsers, githubDuplicateUsers } from '../../store/Github/actions';
 import TextInput from '../../components/Inputs/TextInput';
 
@@ -36,6 +36,10 @@ const GithubUserSearchScreen = ({
     githubSearchUsers(dispatch, state.github.users.search, state.github.users.currentPage + 1);
   }, [dispatch, state.github.users.search, state.github.users.currentPage]);
 
+  const onSelectionChange = useCallback((ids: (string | number)[]) => {
+    setSelectedIds(ids as string[]);
+  }, []);
+
   const onDuplicate = useCallback((ids: (string | number)[]) => {
     dispatch(githubDuplicateUsers(ids as string[]));
   }, [dispatch]);
@@ -59,17 +63,36 @@ const GithubUserSearchScreen = ({
     />
   ), []);
 
+  const renderErrorMessage = useCallback(() => {
+    switch (state.github.users.error) {
+      case GithubSearchUserErrors.Unknown:
+        return 'Unknown Error';
+      case GithubSearchUserErrors.InvalidSearch:
+        return 'Invalid Search Error';
+      case GithubSearchUserErrors.Spam:
+        return 'Spam Error';
+      case GithubSearchUserErrors.Unavailable:
+        return 'Unavailable Error';
+    }
+    return undefined;
+  }, [state.github.users.error]);
+
   return (
     <BaseScreen title="Github Search">
-      <TextInput onChanged={onSearch} />
+      <TextInput
+        placeholder='Search Input'
+        onChange={onSearch}
+        debouceDelayInMs={500}
+      />
       <List<GithubUser>
         items={state.github.users.data}
         selectedIds={selectedIds}
         showMore={state.github.users.currentPage !== state.github.users.maxPage}
-        showEmpty={state.github.users.total === 0 && state.github.users.search.length > 0}
+        showEmpty={!state.github.users.error && state.github.users.total === 0 && state.github.users.search.length > 0}
         loading={state.github.users.loading}
+        error={renderErrorMessage()}
         editMode={editMode}
-        onSelectionChanged={(ids) => setSelectedIds(ids as string[])}
+        onSelectionChange={onSelectionChange}
         onSearchMore={onSearchMore}
         onDuplicate={onDuplicate}
         onDelete={onDelete}

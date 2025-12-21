@@ -1,5 +1,5 @@
 import { GithubConstants } from './constants';
-import { GithubUser } from './reducer';
+import { GithubSearchUserErrors, GithubUser } from './reducer';
 
 // ==================== SEARCH
 
@@ -23,9 +23,9 @@ export const githubSearchUsersStop = (data: GithubUser[], total: number, results
 
 export type GithubSearchUsersErrorAction = {
   type: GithubConstants.GITHUB_SEARCH_USERS_ERROR;
-  payload: { error: Error };
+  payload: { error: GithubSearchUserErrors };
 };
-export const githubSearchUsersError = (error: Error): GithubSearchUsersErrorAction => ({
+export const githubSearchUsersError = (error: GithubSearchUserErrors): GithubSearchUsersErrorAction => ({
   type: GithubConstants.GITHUB_SEARCH_USERS_ERROR,
   payload: { error },
 });

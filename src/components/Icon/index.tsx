@@ -12,13 +12,25 @@ export enum IconSize {
   Large = 'Large',
 }
 
-type IconProps = {
+interface IconProps {
+  /** type of icon */
   type: IconType;
+  /** if icon can be pressed */
   disabled?: boolean;
+  /** size of icon */
   size?: IconSize;
+  /** action to be trigger on press */
   onPress?: () => void;
 };
 
+/**
+ * Icon component
+ * @param type type of icon
+ * @param disabled if icon can be pressed (default: false)
+ * @param size size of icon (default: IconSize.Small)
+ * @param onPress action to be trigger on press
+ * @returns component
+ */
 const Icon = ({ type, disabled = false, size = IconSize.Small, onPress }: IconProps) => {
   return (
     <Pressable disabled={disabled} onPress={onPress}>

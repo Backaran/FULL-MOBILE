@@ -1,35 +1,33 @@
 import { Dispatch } from 'react';
-import { GithubApiSearchUserResponse, githubSearchUsers } from '../../services/github';
-import { githubDeleteUsers, githubDuplicateUsers, githubSearchError, githubSearchStart, githubSearchStop } from './actions';
+import * as GithubService from '../../services/github';
+import { githubSearchUsersError, githubSearchUsersStart, githubSearchUsersStop } from './actions';
 import { GithubUser } from './reducer';
+import { Action } from '../store';
+import { delay } from '../../utils/delay';
 
-export const fetchGithubUsers = async (
-  dispatch: Dispatch<{ type: string }>,
+let currentSearch: string | null = null;
+
+export const githubSearchUsers = async (
+  dispatch: Dispatch<Action>,
   search: string,
-  page?: number,
+  page: number = 1,
+  resultsPerPage: number = 3
 ) => {
-  const _page: number = page || 1;
-  dispatch(githubSearchStart(search, _page));
-  try {
-    const response: GithubApiSearchUserResponse | null = await githubSearchUsers(search, _page);
-    // store id as string in a new string prop for easy duplicate (keeping original in originalId)
-    const items: GithubUser[] = (response?.items || []).map(x => ({ ...x, id: x.id.toString(), originalId: x.id }));
-    dispatch(githubSearchStop(items, response?.total_count || 0));
-  } catch (e) {
-    dispatch(githubSearchError(e as Error));
+
+  // debounce thunk
+  currentSearch = search;
+  await delay(500);
+  if (currentSearch !== search) {
+    return;
   }
-};
 
-export const duplicateGithubUsers = async (
-  dispatch: Dispatch<{ type: string }>,
-  ids: string[],
-) => {
-  dispatch(githubDuplicateUsers(ids));
-};
-
-export const deleteGithubUsers = async (
-  dispatch: Dispatch<{ type: string }>,
-  ids: string[],
-) => {
-  dispatch(githubDeleteUsers(ids));
+  dispatch(githubSearchUsersStart(search, page));
+  try {
+    const response: GithubService.GithubApiSearchUserResponse | null = await GithubService.githubSearchUsers(search, page, resultsPerPage);
+    const responseItems: GithubService.GithubApiUser[] = (response?.items || []);
+    const items: GithubUser[] = responseItems.map(x => ({ ...x, id: x.id.toString(), originalId: x.id }));
+    dispatch(githubSearchUsersStop(items, response?.total_count || 0, resultsPerPage));
+  } catch (e) {
+    dispatch(githubSearchUsersError(e as Error));
+  }
 };

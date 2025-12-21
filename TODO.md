@@ -1,3 +1,0 @@
-- rights for browser openLink
-- Tests
-- Documentation

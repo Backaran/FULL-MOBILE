@@ -7,25 +7,25 @@ export type GithubSearchUsersStartAction = {
   type: GithubConstants.GITHUB_SEARCH_USERS_START;
   payload: { search: string; page: number };
 };
-export const githubSearchStart = (search: string, page: number): GithubSearchUsersStartAction => ({
+export const githubSearchUsersStart = (search: string, page: number): GithubSearchUsersStartAction => ({
   type: GithubConstants.GITHUB_SEARCH_USERS_START,
   payload: { search, page },
 });
 
 export type GithubSearchUsersStopAction = {
   type: GithubConstants.GITHUB_SEARCH_USERS_STOP;
-  payload: { data: GithubUser[]; total: number };
+  payload: { data: GithubUser[]; total: number; resultsPerPage: number };
 };
-export const githubSearchStop = (data: GithubUser[], total: number): GithubSearchUsersStopAction => ({
+export const githubSearchUsersStop = (data: GithubUser[], total: number, resultsPerPage: number): GithubSearchUsersStopAction => ({
   type: GithubConstants.GITHUB_SEARCH_USERS_STOP,
-  payload: { data, total },
+  payload: { data, total, resultsPerPage },
 });
 
 export type GithubSearchUsersErrorAction = {
   type: GithubConstants.GITHUB_SEARCH_USERS_ERROR;
   payload: { error: Error };
 };
-export const githubSearchError = (error: Error): GithubSearchUsersErrorAction => ({
+export const githubSearchUsersError = (error: Error): GithubSearchUsersErrorAction => ({
   type: GithubConstants.GITHUB_SEARCH_USERS_ERROR,
   payload: { error },
 });

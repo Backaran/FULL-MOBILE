@@ -8,13 +8,28 @@ export enum CheckboxInputState {
   Intermediate = 'Intermediate',
 }
 
-type CheckboxInputProps = {
+interface CheckboxInputProps {
+  /** value of the checkbox */
   value: CheckboxInputState;
+  /** if input can be pressed */
   disabled?: boolean;
+  /** action to be trigger on press */
   onChanged?: (state: CheckboxInputState) => void;
 };
 
-const CheckboxInput = ({ value, disabled = false, onChanged }: CheckboxInputProps) => {
+/**
+ * CheckboxInput component
+ * @param value value of the checkbox
+ * @param disabled if input can be pressed (default: false)
+ * @param onChanged action to be trigger on press (default: undefined)
+ * @returns component
+ */
+const CheckboxInput = ({
+  value,
+  disabled = false,
+  onChanged
+}: CheckboxInputProps) => {
+
   const onPress = useCallback(() => {
     if (!disabled && onChanged) {
       switch (value) {

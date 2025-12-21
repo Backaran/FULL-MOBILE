@@ -1,15 +1,25 @@
 import { Pressable, Text, View } from 'react-native';
 import styles from './styles';
 
-type ButtonProps = {
+interface ButtonProps {
+  /** text of the button */
   title: string;
-  enabled?: boolean;
-  onPress: () => void;
+  /** action to be trigger on button press */
+  onPress?: () => void;
 };
 
-const Button = ({ title, enabled = true, onPress }: ButtonProps) => {
+/**
+ * Button component
+ * @param title text of the button
+ * @param onPress action to be trigger on button press
+ * @returns component
+ */
+const Button = ({
+  title,
+  onPress
+}: ButtonProps) => {
   return (
-    <Pressable onPress={enabled ? onPress : undefined}>
+    <Pressable onPress={onPress}>
       <View style={styles.container}>
         <Text style={styles.text}>{title}</Text>
       </View>

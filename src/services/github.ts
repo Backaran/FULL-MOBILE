@@ -15,9 +15,17 @@ export type GithubApiSearchUserResponse = {
 
 let githubSearchUsersAbortController: AbortController | null = null;
 
+/**
+ * Use to search a github users
+ * @param search terme to search
+ * @param page page to retreive
+ * @param resultPerPage result per page
+ * @returns github search user response
+ */
 export const githubSearchUsers = async (
   search: string,
-  page: number = 1,
+  page: number,
+  resultPerPage: number,
 ): Promise<GithubApiSearchUserResponse | null> => {
   let result: GithubApiSearchUserResponse | null = null;
 
@@ -31,7 +39,7 @@ export const githubSearchUsers = async (
   }
 
   try {
-    const url: string = `${githubBaseUrl}/search/users?q=${encodeURIComponent(search)}&page=${page}&per_page=100`;
+    const url: string = `${githubBaseUrl}/search/users?q=${encodeURIComponent(search)}&page=${page}&per_page=${resultPerPage}`;
     const response: Response = await fetch(url, {
       signal: githubSearchUsersAbortController.signal,
     });

@@ -1,8 +1,9 @@
+import { Action } from '../store';
 import { GithubDeleteUsersAction, GithubDuplicateUsersAction, GithubSearchUsersErrorAction, GithubSearchUsersStartAction, GithubSearchUsersStopAction } from './actions';
 import { GithubConstants } from './constants';
 
 export type GithubUser = {
-  id: string; // use for duplicate
+  id: string;
   originalId: number;
   login: string;
   avatar_url: string;
@@ -13,8 +14,8 @@ export interface GithubState {
   users: {
     search: string;
     data: GithubUser[];
-    total: number;
     currentPage: number;
+    total: number;
     maxPage: number;
     loading: boolean;
     error?: Error;
@@ -25,14 +26,14 @@ export const githubInitialState: GithubState = {
   users: {
     search: '',
     data: [],
+    currentPage: 0,
     total: 0,
-    currentPage: 1,
-    maxPage: 1,
+    maxPage: 0,
     loading: false,
   },
 };
 
-export const githubReducer = (state: GithubState, action: { type: string }): GithubState => {
+export const githubReducer = (state: GithubState, action: Action): GithubState => {
   switch (action.type) {
     case GithubConstants.GITHUB_SEARCH_USERS_START: {
       const customAction = action as GithubSearchUsersStartAction;
@@ -59,7 +60,7 @@ export const githubReducer = (state: GithubState, action: { type: string }): Git
           ...state.users,
           data: [...state.users.data, ...customAction.payload.data],
           total: customAction.payload.total,
-          maxPage: Math.ceil(customAction.payload.total / 100), // may implement items per page later
+          maxPage: Math.ceil(customAction.payload.total / 3) || 1,
           loading: false,
           error: undefined,
         },
@@ -80,7 +81,7 @@ export const githubReducer = (state: GithubState, action: { type: string }): Git
       const customAction = action as GithubDuplicateUsersAction;
       const duplicatedUsers: GithubUser[] = state.users.data
         .filter(d => customAction.payload.ids.includes(d.id))
-        .map(x => ({ ...x, id: `${x.id}_copy` }));
+        .map(x => ({ ...x, id: `${x.id}${Date.now()}` }));
       return {
         ...state,
         users: {

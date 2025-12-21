@@ -1,42 +1,48 @@
-import { useCallback, useRef } from 'react';
-import { deleteGithubUsers, duplicateGithubUsers, fetchGithubUsers } from '../../store/Github/thunks';
+import { useCallback, useState } from 'react';
+import { githubSearchUsers } from '../../store/Github/thunks';
 import useStore from '../../hooks/useStore';
 import BaseScreen from '../BaseScreen';
-import SearchInput, { SearchInputRefProps } from '../../components/Inputs/SearchInput';
-import SearchResult, { SearchResultRefProps, SelectionState } from '../../components/SearchResult';
-import GithubResultCard from '../../business/GithubUserCard';
+import List, { SelectionState } from '../../components/List';
+import GithubUserCard from '../../business/GithubUserCard';
 import { GithubUser } from '../../store/Github/reducer';
+import { githubDeleteUsers, githubDuplicateUsers } from '../../store/Github/actions';
+import TextInput from '../../components/Inputs/TextInput';
 
-type GithubUserSearchScreenProps = {
+interface GithubUserSearchScreenProps {
+  /** if user can be duplicated/deleted */
   editMode?: boolean;
+  /** results per page */
+  resultsPerPage?: number;
 };
 
+/**
+ * Screen used to search and display github users
+ * @param editMode if user can be duplicated/deleted (default: true)
+ * @returns component
+ */
 const GithubUserSearchScreen = ({
-  editMode = true
+  editMode = true,
+  resultsPerPage = 3,
 }: GithubUserSearchScreenProps) => {
-
   const { dispatch, state } = useStore();
-  const _searchInputRef = useRef<SearchInputRefProps>(null);
-  const _searchResultRef = useRef<SearchResultRefProps>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const onSearch = useCallback((search: string) => {
-    _searchResultRef.current?.resetSelection();
-    fetchGithubUsers(dispatch, search);
+    setSelectedIds([]);
+    githubSearchUsers(dispatch, search, 1, resultsPerPage);
+  }, [dispatch, resultsPerPage]);
+
+  const onSearchMore = useCallback(() => {
+    githubSearchUsers(dispatch, state.github.users.search, state.github.users.currentPage + 1);
+  }, [dispatch, state.github.users.search, state.github.users.currentPage]);
+
+  const onDuplicate = useCallback((ids: (string | number)[]) => {
+    dispatch(githubDuplicateUsers(ids as string[]));
   }, [dispatch]);
 
-  const onSearchMore = useCallback((page: number) => {
-    const search: string = _searchInputRef.current?.getSearch() || '';
-    fetchGithubUsers(dispatch, search, page);
-  }, [dispatch]);
-
-  const onDuplicateItems = useCallback((itemsToDuplicate: GithubUser[]) => {
-    duplicateGithubUsers(dispatch, itemsToDuplicate.map(x => x.id));
-  }, [dispatch]);
-
-  const onDeleteItems = useCallback((itemsToDelete: GithubUser[]) => {
-    const idsToDelete: string[] = itemsToDelete.map(x => x.id);
-    _searchResultRef.current?.resetSelection(idsToDelete);
-    deleteGithubUsers(dispatch, idsToDelete);
+  const onDelete = useCallback((ids: (string | number)[]) => {
+    setSelectedIds((p) => p.filter(s => !ids.includes(s)));
+    dispatch(githubDeleteUsers(ids as string[]))
   }, [dispatch]);
 
   const renderItem = useCallback((
@@ -45,27 +51,28 @@ const GithubUserSearchScreen = ({
     selected: boolean,
     onSelectionChanged: (id: string | number, state: SelectionState) => void,
   ) => (
-    <GithubResultCard
+    <GithubUserCard
       data={item}
       selected={selected}
       editMode={_editMode}
-      onPress={() => onSelectionChanged(item.id, selected ? SelectionState.NotSelected : SelectionState.Selected)}
+      onToggle={() => onSelectionChanged(item.id, selected ? SelectionState.NotSelected : SelectionState.Selected)}
     />
   ), []);
 
   return (
     <BaseScreen title="Github Search">
-      <SearchInput ref={_searchInputRef} onSearch={onSearch} />
-      <SearchResult<GithubUser>
-        ref={_searchResultRef}
-        items={state.github.users.search.length > 0 ? state.github.users.data : undefined}
-        currentPage={state.github.users.currentPage}
-        maxPage={state.github.users.maxPage}
+      <TextInput onChanged={onSearch} />
+      <List<GithubUser>
+        items={state.github.users.data}
+        selectedIds={selectedIds}
+        showMore={state.github.users.currentPage !== state.github.users.maxPage}
+        showEmpty={state.github.users.total === 0 && state.github.users.search.length > 0}
         loading={state.github.users.loading}
         editMode={editMode}
+        onSelectionChanged={(ids) => setSelectedIds(ids as string[])}
         onSearchMore={onSearchMore}
-        onDuplicateItems={onDuplicateItems}
-        onDeleteItems={onDeleteItems}
+        onDuplicate={onDuplicate}
+        onDelete={onDelete}
         renderItem={renderItem}
       />
     </BaseScreen>

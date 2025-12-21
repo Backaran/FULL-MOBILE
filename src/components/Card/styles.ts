@@ -19,4 +19,9 @@ export default StyleSheet.create({
     // Android shadow
     elevation: 3,
   },
+  selectionContainer: {
+    position: 'absolute',
+    top: 15,
+    left: 15,
+  },
 });

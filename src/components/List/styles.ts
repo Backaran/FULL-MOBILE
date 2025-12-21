@@ -29,14 +29,18 @@ export default StyleSheet.create({
     gap: 10,
   },
   resultContainer: {
-    flex: 1,
+    flexGrow: 1,
+  },
+  resultContainerCentered: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   emptyResultText: {
     textAlign: 'center',
   },
-  loaderContainer: {
-    flex: 1,
+  loadMoreContainer: {
     justifyContent: 'center',
     alignItems: 'center',
+    paddingVertical: 8,
   },
 });

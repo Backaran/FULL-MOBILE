@@ -30,6 +30,15 @@ export const githubSearchUsersError = (error: GithubSearchUserErrors): GithubSea
   payload: { error },
 });
 
+export type GithubSearchUsersResetAction = {
+  type: GithubConstants.GITHUB_SEARCH_USERS_RESET;
+  payload: {};
+};
+export const githubSearchUsersReset = (): GithubSearchUsersResetAction => ({
+  type: GithubConstants.GITHUB_SEARCH_USERS_RESET,
+  payload: {},
+});
+
 // ==================== DUPLICATE
 
 export type GithubDuplicateUsersAction = {

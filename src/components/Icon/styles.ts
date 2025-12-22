@@ -14,15 +14,15 @@ export default StyleSheet.create({
     borderRadius: 50,
   },
   iconSmall: {
+    width: 14,
+    height: 14,
+  },
+  iconMedium: {
     width: 22,
     height: 22,
   },
-  iconMedium: {
+  iconLarge: {
     width: 32,
     height: 32,
-  },
-  iconLarge: {
-    width: 42,
-    height: 42,
   },
 });

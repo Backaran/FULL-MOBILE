@@ -22,6 +22,27 @@ export interface Action {
   type: string;
 }
 
+/** Action used to control thunk cancelation */
+export class ThunkAction {
+  private key?: number;
+  private controller?: AbortController;
+
+  start = (): number => {
+    this.controller?.abort();
+    this.key = Date.now();
+    this.controller = new AbortController();
+    return this.key;
+  };
+
+  isCanceled = (key: number): boolean => {
+    return key !== this.key;
+  };
+
+  getSignal = (): (AbortSignal | undefined) => {
+    return this.controller?.signal;
+  }
+}
+
 /**
  * App general reducer used to alter app state with an action,
  * redirect to specific reducer depending action type

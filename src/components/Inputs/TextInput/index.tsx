@@ -1,6 +1,7 @@
 import { TextInput as BaseTextInput, View } from 'react-native';
 import styles from './styles';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
+import { useDebounce } from '../../../hooks/useDebounce';
 
 interface TextInputProps {
   /** initial search value */
@@ -9,7 +10,7 @@ interface TextInputProps {
   onChange: (search: string) => void;
   /** placeholder of input */
   placeholder?: string;
-  /** delay before trigger on change, without subsequent change  */
+  /** delay before trigger change, without subsequent change  */
   debouceDelayInMs?: number;
 };
 
@@ -18,6 +19,7 @@ interface TextInputProps {
  * @param initialValue initial search value (default: '')
  * @param onChanged action to be trigger after search changed
  * @param placeholder placeholder of input (default: 'Search Input')
+ * @param debouceDelayInMs delay before trigger change, without subsequent change
  * @returns component
  */
 const TextInput = ({
@@ -26,26 +28,13 @@ const TextInput = ({
   placeholder = '',
   debouceDelayInMs,
 }: TextInputProps) => {
-  const firstRender = useRef(true);
   const [value, setValue] = useState<string>(initialValue);
 
-  useEffect(() => {
-    if (firstRender.current) {
-      firstRender.current = false;
-      return;
-    }
-
-    if (!debouceDelayInMs) {
-      onChange(value);
-      return;
-    }
-
-    const timeout = setTimeout(() => {
-      onChange(value);
-    }, debouceDelayInMs);
-
-    return () => { clearTimeout(timeout); };
-  }, [value, debouceDelayInMs, onChange]);
+  useDebounce<string>(
+    onChange,
+    value,
+    debouceDelayInMs
+  );
 
   return (
     <View style={styles.container}>

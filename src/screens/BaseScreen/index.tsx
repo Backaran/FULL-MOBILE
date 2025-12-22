@@ -21,12 +21,14 @@ const BaseScreen = ({ title, children }: BaseScreenProps) => {
 
   return (
     <View
-      style={{
-        ...styles.container,
-        paddingTop: safeAreaInsets.top,
-        paddingLeft: safeAreaInsets.left,
-        paddingRight: safeAreaInsets.right,
-      }}
+      style={[
+        styles.container,
+        {
+          paddingTop: safeAreaInsets.top,
+          paddingLeft: safeAreaInsets.left,
+          paddingRight: safeAreaInsets.right,
+        }
+      ]}
     >
       <View style={styles.title}>
         <Text style={styles.titleText}>{title}</Text>

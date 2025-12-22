@@ -1,6 +1,7 @@
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { useCallback } from 'react';
 import styles from './styles';
+import Icon, { IconType } from '../../Icon';
 
 export enum CheckboxInputState {
   Unselected = 'Unselected',
@@ -27,7 +28,7 @@ interface CheckboxInputProps {
 const CheckboxInput = ({
   value,
   disabled = false,
-  onChanged
+  onChanged,
 }: CheckboxInputProps) => {
 
   const onPress = useCallback(() => {
@@ -46,29 +47,39 @@ const CheckboxInput = ({
     }
   }, [disabled, onChanged, value]);
 
+  const getIcon = useCallback(() => {
+    let iconType: IconType | undefined;
+    switch (value) {
+      case CheckboxInputState.Selected:
+        iconType = IconType.Ok;
+        break;
+      case CheckboxInputState.Intermediate:
+        iconType = IconType.Minus;
+        break;
+    }
+    if (!iconType) {
+      return null;
+    }
+    return (
+      <Icon
+        type={iconType}
+        disabled
+      />
+    );
+  }, [value]);
+
   return (
     <Pressable disabled={disabled || !onChanged} onPress={onPress}>
       <View
-        style={{
-          ...styles.container,
-          ...(disabled ? styles.containerDisabled : styles.containerEnabled),
-        }}
+        style={[
+          styles.container,
+          disabled ? styles.containerDisabled : styles.containerEnabled,
+        ]}
       >
-        <Text style={styles.text}>{getCheckboxInputText(value)}</Text>
+        {getIcon()}
       </View>
     </Pressable>
   );
-};
-
-const getCheckboxInputText = (state: CheckboxInputState): string => {
-  switch (state) {
-    case CheckboxInputState.Unselected:
-      return '';
-    case CheckboxInputState.Selected:
-      return 'X';
-    case CheckboxInputState.Intermediate:
-      return '-';
-  }
 };
 
 export default CheckboxInput;

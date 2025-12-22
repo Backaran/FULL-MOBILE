@@ -2,9 +2,9 @@ import { Dispatch } from 'react';
 import * as GithubService from '../../services/github';
 import { githubSearchUsersError, githubSearchUsersStart, githubSearchUsersStop } from './actions';
 import { GithubSearchUserErrors, GithubUser } from './reducer';
-import { Action } from '../store';
+import { Action, ThunkAction } from '../store';
 
-let githubSearchUsersAbortController: AbortController | null = null;
+const githubSearchUsersAction: ThunkAction = new ThunkAction();
 
 export const githubSearchUsers = async (
   dispatch: Dispatch<Action>,
@@ -12,19 +12,20 @@ export const githubSearchUsers = async (
   page: number = 1,
   resultsPerPage: number = 3
 ) => {
-  githubSearchUsersAbortController?.abort();
-  githubSearchUsersAbortController = new AbortController();
-  dispatch(githubSearchUsersStart(search, page));
+  const key: number = githubSearchUsersAction.start();
   try {
+    dispatch(githubSearchUsersStart(search, page));
     const response: GithubService.GithubApiSearchUserResponse | null = await GithubService.githubSearchUsers(
       search,
       page,
       resultsPerPage,
-      githubSearchUsersAbortController.signal
+      githubSearchUsersAction.getSignal()
     );
     const responseItems: GithubService.GithubApiUser[] = (response?.items || []);
     const items: GithubUser[] = responseItems.map(x => ({ ...x, id: x.id.toString(), originalId: x.id }));
-    dispatch(githubSearchUsersStop(items, response?.total_count || 0, resultsPerPage));
+    if (!githubSearchUsersAction.isCanceled(key)) {
+      dispatch(githubSearchUsersStop(items, response?.total_count || 0, resultsPerPage));
+    }
   } catch (e: any) {
     const error: Error = e as Error;
     if (error.message !== 'AbortError') {
@@ -40,7 +41,9 @@ export const githubSearchUsers = async (
           customError = GithubSearchUserErrors.Unavailable;
           break;
       }
-      dispatch(githubSearchUsersError(customError));
+      if (!githubSearchUsersAction.isCanceled(key)) {
+        dispatch(githubSearchUsersError(customError));
+      }
     }
   }
 };

@@ -85,6 +85,12 @@ export const githubReducer = (state: GithubState, action: Action): GithubState =
         },
       };
     }
+    case GithubConstants.GITHUB_SEARCH_USERS_RESET: {
+      return {
+        ...state,
+        ...githubInitialState,
+      };
+    }
     case GithubConstants.GITHUB_DUPLICATE_USERS: {
       const customAction = action as GithubDuplicateUsersAction;
       const duplicatedUsers: GithubUser[] = state.users.data

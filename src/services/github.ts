@@ -33,7 +33,6 @@ export const githubSearchUsers = async (
 
     const url: string = `${GITHUB_BASE_URL}/search/users?q=${encodeURIComponent(search)}&page=${page}&per_page=${resultPerPage}`;
     const response: Response = await fetch(url, { signal });
-
     if (!response.ok) {
       throw new Error(String(response.status));
     }

@@ -22,7 +22,7 @@ jest.mock('../components/List', () => {
   const { Button } = require('react-native');
   return ({ onSearchMore, onDuplicate, onDelete }: any) => (
     <>
-      <Button title="" testID="search-more" onPress={onSearchMore} />
+      <Button title="" testID="search-more" onPress={() => onSearchMore()} />
       <Button title="" testID="duplicate" onPress={() => onDuplicate(['1'])} />
       <Button title="" testID="delete" onPress={() => onDelete(['1'])} />
     </>
@@ -32,8 +32,8 @@ jest.mock('../components/List', () => {
 jest.mock('../components/Inputs/TextInput', () => {
   const React = require('react');
   const { Button } = require('react-native');
-  return ({ onChanged }: any) => (
-    <Button title="" testID="search-input" onPress={() => onChanged('john')} />
+  return ({ onChange }: any) => (
+    <Button title="" testID="search-input" onPress={() => onChange('john')} />
   );
 });
 
@@ -48,11 +48,11 @@ const mockDispatch = jest.fn();
 const mockState = {
   github: {
     users: {
+      search: '',
       data: [],
-      search: 'john',
-      currentPage: 1,
-      maxPage: 2,
+      currentPage: 0,
       total: 0,
+      maxPage: 0,
       loading: false,
     },
   },
@@ -70,12 +70,12 @@ describe('GithubUserSearchScreen', () => {
     jest.clearAllMocks();
   });
 
-  it('renders correctly', () => {
+  it('render', () => {
     const { getByTestId } = render(<GithubUserSearchScreen />);
     expect(getByTestId('search-input')).toBeTruthy();
   });
 
-  it('calls githubSearchUsers on search', () => {
+  it('search', () => {
     const { getByTestId } = render(<GithubUserSearchScreen resultsPerPage={5} />);
 
     fireEvent.press(getByTestId('search-input'));
@@ -88,20 +88,21 @@ describe('GithubUserSearchScreen', () => {
     );
   });
 
-  it('loads more users when search more is triggered', () => {
-    const { getByTestId } = render(<GithubUserSearchScreen />);
+  it('searchMore', () => {
+    const { getByTestId } = render(<GithubUserSearchScreen resultsPerPage={5} />);
 
     fireEvent.press(getByTestId('search-more'));
 
     expect(githubSearchUsers).toHaveBeenCalledWith(
       mockDispatch,
-      'john',
-      2
+      '',
+      1,
+      5
     );
   });
 
-  it('dispatches duplicate action', () => {
-    const { getByTestId } = render(<GithubUserSearchScreen />);
+  it('duplicate', () => {
+    const { getByTestId } = render(<GithubUserSearchScreen resultsPerPage={5} />);
 
     fireEvent.press(getByTestId('duplicate'));
 
@@ -110,8 +111,8 @@ describe('GithubUserSearchScreen', () => {
     );
   });
 
-  it('dispatches delete action', () => {
-    const { getByTestId } = render(<GithubUserSearchScreen />);
+  it('delete', () => {
+    const { getByTestId } = render(<GithubUserSearchScreen resultsPerPage={5} />);
 
     fireEvent.press(getByTestId('delete'));
 

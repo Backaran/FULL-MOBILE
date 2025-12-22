@@ -11,7 +11,7 @@ interface UseLinkingResult {
  * @returns openUrl : used to open url link
  */
 const useLinking = (): UseLinkingResult => {
-  const open = async (url: string) => {
+  const openUrl = async (url: string) => {
     const result: boolean = await openURL(url);
     if (!result) {
       Alert.alert('Error', 'Impossible to open link !');
@@ -19,7 +19,7 @@ const useLinking = (): UseLinkingResult => {
     return result;
   };
   return {
-    openUrl: open
+    openUrl
   };
 };
 

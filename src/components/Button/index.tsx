@@ -1,5 +1,6 @@
 import { Pressable, Text, View } from 'react-native';
 import styles from './styles';
+import React from 'react';
 
 interface ButtonProps {
   /** text of the button */
@@ -27,4 +28,4 @@ const Button = ({
   );
 };
 
-export default Button;
+export default React.memo(Button);

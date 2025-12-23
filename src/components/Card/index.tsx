@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useState } from 'react';
+import React, { ReactNode, useCallback, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import CheckboxInput, { CheckboxInputState } from '../Inputs/CheckboxInput';
 import styles from './styles';
@@ -64,4 +64,4 @@ const Card = ({
   );
 };
 
-export default Card;
+export default React.memo(Card);

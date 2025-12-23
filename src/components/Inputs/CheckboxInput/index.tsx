@@ -1,5 +1,5 @@
 import { Pressable, View } from 'react-native';
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import styles from './styles';
 import Icon, { IconType } from '../../Icon';
 
@@ -82,4 +82,4 @@ const CheckboxInput = ({
   );
 };
 
-export default CheckboxInput;
+export default React.memo(CheckboxInput);

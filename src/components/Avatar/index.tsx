@@ -1,5 +1,6 @@
 import { Image, View } from 'react-native';
 import styles from './styles';
+import React from 'react';
 
 interface AvatarProps {
   /** url of image to be displayed */
@@ -19,4 +20,4 @@ const Avatar = ({ url }: AvatarProps) => {
   );
 };
 
-export default Avatar;
+export default React.memo(Avatar);

@@ -1,6 +1,6 @@
 import { Image, Pressable, View } from 'react-native';
 import styles from './styles';
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 
 export enum IconType {
   Ok = 'Ok',
@@ -84,4 +84,4 @@ const Icon = ({
   );
 };
 
-export default Icon;
+export default React.memo(Icon);
